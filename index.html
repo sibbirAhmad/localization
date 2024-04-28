@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>String List</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- SweetAlert2 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@12.0.0/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .string-card {
+        border-left: 5px solid #28a745; /* Green border on the left */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
+        transition: box-shadow 0.3s ease-in-out; /* Smooth transition for shadow effect */
+        cursor: pointer; /* Change cursor on hover */
+        margin-bottom: 20px; /* Add space between cards */
+      }
+
+      .string-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+      }
+
+      .string-card-body {
+        padding: 20px;
+      }
+
+      .string-card-body p {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .floating-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999; /* Ensure it's above other content */
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">String List</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Select Language
+              </a>
+              <ul
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdown"
+                id="languageDropdown"
+              >
+                <!-- Dropdown items will be dynamically generated here -->
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-none" href="/users.html" id="userButton">Users</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="logoutButton">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h1 class="mb-4">String List</h1>
+      <p id="selectedLanguage"></p>
+      <div id="stringList">
+        <!-- Cards will be dynamically added here -->
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Translate</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <!-- <label for="newString" class="form-label">New String</label> -->
+              <textarea
+                rows="2"
+                type="text"
+                class="form-control"
+                id="newString"
+              ></textarea>
+
+              <!-- <div id="hint" class="form-text d-none">
+                Type your new string here.
+              </div> -->
+            </div>
+            <div class="mb-3">
+              <!-- data-bs-dismiss="modal" -->
+              <button
+                type="button"
+                class="btn btn-primary col"
+                id="translateButton"
+                onclick="myTranslation()"
+              >
+                <span id="translateButtonContent">Translate by Machine</span>
+              </button>
+            </div>
+            <div class="mb-3">
+              <!-- <label for="description" class="form-label"
+                >English (Source Language)</label
+              >
+              <textarea
+                class="form-control"
+                id="description"
+                rows="3"
+                readonly
+              ></textarea> -->
+              <label
+                for="description"
+                style="font-size: 12px; color: rgb(61, 60, 59)"
+                >English</label
+              >
+              <p id="description"></p>
+              <!-- <div id="hint" class="form-text">
+                Description will be shown from dataSet2.
+              </div> -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <!-- <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </'button> -->
+            <button
+              type="button"
+              class="btn btn-primary col"
+              data-bs-dismiss="modal"
+              onclick="updateString()"
+            >
+              . Save
+            </button>
+            <!-- <button
+              type="button"
+              class="btn btn-primary"
+              onclick="updateString()">
+              Save
+            </button> -->
+            <input type="hidden" id="editIndex" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal" id="loadingModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Updating data...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Button -->
+    <button
+      id="updateButton"
+      class="btn btn-primary floating-button d-none"
+      onclick="updateData()"
+    >
+      Update
+    </button>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@12.0.0/dist/sweetalert2.all.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app_helper.js"></script>
+    <script src="index.js"></script>
+
+    <script></script>
+  </body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User List</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Select CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      /* Centering link at the bottom */
+  .center-bottom {
+    margin-top: auto;
+    text-align: center;
+  }
+      .user-card {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.user-card:hover {
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+}
+      .floating-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000; /* Ensure it's above other content */
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">User List</h1>
+      <div class="row" id="userList">
+        <!-- User data will be inserted here -->
+      </div>
+    </div>
+<!-- Add floating button -->
+<button class="btn btn-primary floating-button" onclick="openCreateUserModal()">Add New User</button>
+<div class="center-bottom">
+  <a href="index.html"><u>Back to Home</u></a>
+</div>
+<!-- Modal for creating new user -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+  <!-- Modal content for creating new user will be inserted here -->
+</div>
+    <!-- Modal for updating user data -->
+    <div
+      class="modal fade"
+      id="updateUserModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="updateUserModalLabel"
+      aria-hidden="true"
+    >
+      <!-- Modal content for updating user data will be inserted here -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap Select JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script src="app_helper.js"></script>
+
+    <script>
+      // Sample user data
+function getAllUsers(){
+  const requestData = {
+    request: "get_all_users",
+    auth_token: getFormCookie('token'),
+  };
+  // Call sendData() function with the dummy URL, data, and success callback function
+  request(
+    api_ulr,
+    requestData,
+    function (responseData) {
+      var response = responseData;
+      var data = response.data;
+      // console.log(data);
+       languagesData = data.app_languages;
+      // Parse the JSON strings inside the languages array
+const userDataWithParsedLanguages = data.user_list.map(user => {
+  const parsedLanguages = JSON.parse(user.languages);
+  return { ...user, languages: parsedLanguages };
+});
+// Set userData to the parsed data
+ userData = userDataWithParsedLanguages;
+ displayUserList();
+
+      Swal.fire({
+        icon: "success",
+        title: "Communication Success",
+        text: responseData.message,
+        timer: 2000, // Automatically close after 2 seconds
+        showConfirmButton: false,
+      });
+    },
+    function (errorData) {
+      window.alert("An error occurred: " + errorData);
+    }
+  );
+}
+      getAllUsers();//Call to fetch all users
+      let userData = [
+        {
+          email: "email@email.com",
+          password: "password",
+          token: "ZW1haWxAZW1haWwuY29tcGFzc3dvcmQ=",
+          name: "Test User",
+          role: "admin",
+          status: 1,
+          languages: [
+            { iso: "ar-rSA", name: "Arabic" },
+            { iso: "bn", name: "Bangla" },
+          ],
+        },
+        {
+          email: "new@email.com",
+          password: "password",
+          name: "Update User name",
+          role: "user",
+          status: 1,
+          languages: [
+            { iso: "ar-rSA", name: "Arabic" },
+            { iso: "bn", name: "Bangla" },
+          ],
+        },
+      ];
+
+      // Function to display user list
+      function displayUserList() {
+        const userListContainer = document.getElementById("userList");
+        userListContainer.innerHTML = "";
+        userData.forEach((user) => {
+            const languages = user.languages.map(lang => lang.name).join(', '); // Extract language names
+          const userCard = `
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+          <div class="card user-card">
+            <img src="https://via.placeholder.com/150" class="card-img-top avatar" alt="Avatar">
+            <div class="card-body">
+              <h5 class="card-title">${user.name}</h5>
+              <p class="card-text">Email: ${user.email}</p>
+              <p class="card-text">Role: ${user.role}</p>
+              <p class="card-text">Languages: ${languages}</p> <!-- Display languages -->
+              <button class="btn btn-primary" onclick="openUpdateModal(${userData.indexOf(
+                user
+              )})">Update</button>
+            </div>
+          </div>
+        </div>
+      `;
+          userListContainer.innerHTML += userCard;
+        });
+      }
+
+      // Function to open update modal
+      function openUpdateModal(index) {
+    // Clear previous modal content
+    $("#updateUserModal").empty();
+    // Create new modal content
+    const modalContent = `
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateUserModalLabel">Update User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form for updating user data will be inserted here -->
+                    <form id="updateUserForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" value="${userData[index].name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" value="${userData[index].email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="text" class="form-control" id="password" value="${userData[index].password}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status" required>
+                                <option value="1" ${userData[index].status === 1 ? "selected" : ""}>Active</option>
+                                <option value="0" ${userData[index].status === 0 ? "selected" : ""}>Block</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" required>
+                                <option value="admin" ${userData[index].role === "admin" ? "selected" : ""}>Admin</option>
+                                <option value="user" ${userData[index].role === "user" ? "selected" : ""}>User</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="languages">Languages</label>
+                            <select class="form-control selectpicker" id="languages" multiple data-live-search="true">
+                                <!-- Options will be inserted dynamically -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    // Append modal content
+    $("#updateUserModal").append(modalContent);
+    
+    // Populate language dropdown
+    const languagesDropdown = $('#languages');
+    languagesData.forEach(language => {
+        const option = $('<option></option>').attr('value', language.iso).text(language.name);
+        languagesDropdown.append(option);
+    }); 
+    //Set selected
+    var userLanguages = userData[index].languages;
+    const languageSelect = document.getElementById('languages');
+    const options = languageSelect.options;
+    for (const language of userLanguages) {
+        for (const option of options) {
+            if (option.value === language.iso) {
+                option.selected = true;
+            }
+        }
+    }
+
+    // Initialize multi-selector dropdown
+    $('.selectpicker').selectpicker();
+        // Append modal content
+        // $("#updateUserModal").append(modalContent);
+        // Show modal
+        $("#updateUserModal").modal("show");
+
+        // Update user data when form is submitted
+        $("#updateUserForm").submit(function (e) {
+          e.preventDefault();
+          // Update user data
+          userData[index].name = $("#name").val();
+          userData[index].email = $("#email").val();
+          userData[index].role = $("#role").val();
+        //   const selectedLanguages = $('#languages').val();
+          const selectElement = document.getElementById("languages");
+    const selectedOptions = selectElement.selectedOptions;
+    const selectedLanguages = [];
+    for (const option of selectedOptions) {
+        const iso = option.value;
+        const name = option.textContent;
+        selectedLanguages.push({ iso, name });
+    }
+    // console.log(selectedLanguages);
+    var name = $("#name").val();
+    var email = $("#email").val();
+    var role = $("#role").val();
+    var status = $("#status").val();
+    var password = $("#password").val();
+    var languages = selectedLanguages;
+    const requestData ={
+    auth_token : getFormCookie('token'),
+    request:"update_user",
+    email : email,
+    password : password,
+    name : name,
+    status : status,
+    role : role,
+    languages : JSON.stringify(languages)
+};
+    request(
+    api_ulr,
+    requestData,
+    function (responseData) {
+
+      Swal.fire({
+        icon: "success",
+        title: "Communication Success",
+        text: responseData.message,
+        timer: 2000, // Automatically close after 2 seconds
+        showConfirmButton: false,
+      });
+        getAllUsers(); // Call
+    },
+    function (errorData) {
+      window.alert("An error occurred: " + errorData);
+    }
+  );
+
+
+//   console.log("Selected Languages:", selectedLanguagesName);
+          
+//           selectedLanguages.forEach((name)=>{
+//             console.log(name,selectedLanguagesName[]);
+//           })
+//           console.log(selectedLanguagesName);
+          // Close modal
+          $("#updateUserModal").modal("hide");
+          // Refresh user list
+         
+         
+          displayUserList();
+        
+        });
+      }
+ function openCreateUserModal() {
+    // Clear previous modal content
+    $("#createUserModal").empty();
+    // Create new modal content
+    const modalContent = `
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserModalLabel">Add new user</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form for updating user data will be inserted here -->
+                    <form id="createUserForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="text" class="form-control" id="password" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status" required>
+                                <option value="1" >Active</option>
+                                <option value="0">Block</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" required>
+                                <option value="admin" >Admin</option>
+                                <option value="user" >User</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="languages">Languages</label>
+                            <select class="form-control selectpicker" id="languages" multiple data-live-search="true">
+                                <!-- Options will be inserted dynamically -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    // Append modal content
+    $("#createUserModal").append(modalContent);
+
+    // Populate language dropdown
+    const languagesDropdown = $('#languages');
+    languagesData.forEach(language => {
+        const option = $('<option></option>').attr('value', language.iso).text(language.name);
+        languagesDropdown.append(option);
+    });
+    // Initialize multi-selector dropdown
+    $('.selectpicker').selectpicker();
+        // Append modal content
+        // $("#updateUserModal").append(modalContent);
+        // Show modal
+        $("#createUserModal").modal("show");
+
+        // Update user data when form is submitted
+        $("#createUserForm").submit(function (e) {
+          e.preventDefault();
+
+        //   const selectedLanguages = $('#languages').val();
+          const selectElement = document.getElementById("languages");
+    const selectedOptions = selectElement.selectedOptions;
+    const selectedLanguages = [];
+    for (const option of selectedOptions) {
+        const iso = option.value;
+        const name = option.textContent;
+        selectedLanguages.push({ iso, name });
+    }
+    // console.log(selectedLanguages);
+    var name = $("#name").val();
+    var email = $("#email").val();
+    var role = $("#role").val();
+    var status = $("#status").val();
+    var password = $("#password").val();
+    var languages = selectedLanguages;
+
+    const requestData ={
+    auth_token : getFormCookie('token'),
+    request:"add_new_user",
+    email : email,
+    password : password,
+    name : name,
+    status : status,
+    role : role,
+    languages : JSON.stringify(languages)
+};
+    request(
+    api_ulr,
+    requestData,
+    function (responseData) {
+        if (responseData.status === 200){
+            showSuccess("Successfully added",responseData.media);
+            getAllUsers(); // Call
+
+        }else {
+            showFailure("Failure",responseData.message);
+        }
+    },
+    function (errorData) {
+      window.alert("An error occurred: " + errorData);
+    }
+  );
+
+
+   // console.log("Selected Languages:", requestData);
+
+//           selectedLanguages.forEach((name)=>{
+//             console.log(name,selectedLanguagesName[]);
+//           })
+//           console.log(selectedLanguagesName);
+          // Close modal
+          $("#createUserModal").modal("hide");
+          // Refresh user list
+
+
+          displayUserList();
+
+        });
+      }
+
+
+ 
+
+      // Initial display of user list
+      displayUserList();
+
+      // Sample data
+      var languagesData = [
+        { iso: "ar-rSA", name: "Arabic" },
+        { iso: "bn", name: "Bangla" },
+        { iso: "em", name: "English" },
+      ];
+
+      // Populate language dropdown
+      const languagesDropdown = $("#languages");
+      languagesData.forEach((language) => {
+        const option = $("<option></option>")
+          .attr("value", language.name)
+          .text(language.name);
+        languagesDropdown.append(option);
+      });
+
+      // Initialize multi-selector dropdown
+      $(".selectpicker").selectpicker();
+    </script>
+  </body>
+</html>
