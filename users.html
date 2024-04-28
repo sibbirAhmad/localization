@@ -64,7 +64,7 @@
 <!-- Add floating button -->
 <button class="btn btn-primary floating-button" onclick="openCreateUserModal()">Add New User</button>
 <div class="center-bottom">
-  <a href="/index.html"><u>Back to Home</u></a>
+  <a href="javascript:gotoHomePage()"><u>Back to Home</u></a>
 </div>
 <!-- Modal for creating new user -->
 <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
@@ -94,6 +94,9 @@
 
     <script>
       // Sample user data
+      function gotoHomePage(){
+                  window.location.replace(home_page);
+      }
 function getAllUsers(){
   const requestData = {
     request: "get_all_users",
@@ -131,31 +134,7 @@ const userDataWithParsedLanguages = data.user_list.map(user => {
   );
 }
       getAllUsers();//Call to fetch all users
-      let userData = [
-        {
-          email: "email@email.com",
-          password: "password",
-          token: "ZW1haWxAZW1haWwuY29tcGFzc3dvcmQ=",
-          name: "Test User",
-          role: "admin",
-          status: 1,
-          languages: [
-            { iso: "ar-rSA", name: "Arabic" },
-            { iso: "bn", name: "Bangla" },
-          ],
-        },
-        {
-          email: "new@email.com",
-          password: "password",
-          name: "Update User name",
-          role: "user",
-          status: 1,
-          languages: [
-            { iso: "ar-rSA", name: "Arabic" },
-            { iso: "bn", name: "Bangla" },
-          ],
-        },
-      ];
+      let userData = [];
 
       // Function to display user list
       function displayUserList() {

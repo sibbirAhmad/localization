@@ -1,6 +1,10 @@
 var api_ulr =
   "https://script.google.com/macros/s/AKfycbyX7l85AJZuu-pGiuSi0YypKzYjWo1YvEPoWNMR3pFruS8M7F91iLE5yxqgGoZtEqb_fA/exec";
 
+var home_page = "localization/index.html"
+var user_page = "localization/users.html"  
+var login_page = "localization/login.html"  
+
 function saveToSession(key, value) {
   sessionStorage.setItem(key, value);
 }

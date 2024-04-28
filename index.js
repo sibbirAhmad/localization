@@ -1,6 +1,10 @@
 const jsonString = getUserLanguages(); //'[{"iso":"ar-rSA", "name":"Arabic"},{"iso":"bn", "name":"Bangla"}]';
 const languages = JSON.parse(jsonString);
 
+function gotoUserPage(){
+  window.location.replace(user_page);
+}
+
 
 // Check if user is logged in when the page loads
 document.addEventListener("DOMContentLoaded", function () {
@@ -31,9 +35,7 @@ function generateDropdownItems() {
     });
   }
  } catch (error) {
-  window.location.replace(
-    "/login.html",
-  );
+  window.location.replace(home_page);
  }
 }
 
@@ -107,7 +109,7 @@ document
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     // Redirect to login page
-    window.location.href = "login.html";
+    window.location.href = login_page;
   });
 var modal = document.getElementById("myModal");
 var editIndex;

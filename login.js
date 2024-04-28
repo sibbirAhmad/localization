@@ -47,7 +47,7 @@ document
           
 
           // Redirect to index page
-          window.location.replace("/index.html");
+          window.location.replace(home_page);
         } else {
           showFailure("Login Failed",data.message);
         }
