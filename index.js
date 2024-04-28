@@ -1,8 +1,23 @@
 const jsonString = getUserLanguages(); //'[{"iso":"ar-rSA", "name":"Arabic"},{"iso":"bn", "name":"Bangla"}]';
 const languages = JSON.parse(jsonString);
 
+
+// Check if user is logged in when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+  if (!isLoggedIn()) {
+    // User is not logged in, redirect to login page
+    window.location.href = "login.html";
+  }
+  const role = getFormCookie('role');
+  if (role === 'admin'){
+    const updateButton = document.getElementById("userButton");
+    updateButton.classList.remove("d-none");
+  }
+});
+
 // Function to generate dropdown items
 function generateDropdownItems() {
+ try {
   const languageDropdown = document.getElementById("languageDropdown");
   if (languageDropdown) {
     // Clear existing dropdown items
@@ -15,6 +30,11 @@ function generateDropdownItems() {
       languageDropdown.appendChild(dropdownItem);
     });
   }
+ } catch (error) {
+  window.location.replace(
+    "/login.html",
+  );
+ }
 }
 
 // Function to handle language selection
@@ -78,18 +98,6 @@ if (languages.length > 0) {
   selectLanguage(iso == null ? languages[0].iso : iso);
 }
 
-// Check if user is logged in when the page loads
-document.addEventListener("DOMContentLoaded", function () {
-  if (!isLoggedIn()) {
-    // User is not logged in, redirect to login page
-    window.location.href = "login.html";
-  }
-  const role = getFormCookie('role');
-  if (role === 'admin'){
-    const updateButton = document.getElementById("userButton");
-    updateButton.classList.remove("d-none");
-  }
-});
 
 // Logout button click event handler
 document

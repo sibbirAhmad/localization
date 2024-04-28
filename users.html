@@ -62,7 +62,7 @@
 <!-- Add floating button -->
 <button class="btn btn-primary floating-button" onclick="openCreateUserModal()">Add New User</button>
 <div class="center-bottom">
-  <a href="index.html"><u>Back to Home</u></a>
+  <a href="/index.html"><u>Back to Home</u></a>
 </div>
 <!-- Modal for creating new user -->
 <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
@@ -160,11 +160,11 @@ const userDataWithParsedLanguages = data.user_list.map(user => {
         const userListContainer = document.getElementById("userList");
         userListContainer.innerHTML = "";
         userData.forEach((user) => {
+        //  <img src="https://via.placeholder.com/150" class="card-img-top avatar" alt="Avatar">
             const languages = user.languages.map(lang => lang.name).join(', '); // Extract language names
           const userCard = `
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
           <div class="card user-card">
-            <img src="https://via.placeholder.com/150" class="card-img-top avatar" alt="Avatar">
             <div class="card-body">
               <h5 class="card-title">${user.name}</h5>
               <p class="card-text">Email: ${user.email}</p>
