@@ -35,7 +35,7 @@ function generateDropdownItems() {
     });
   }
  } catch (error) {
-  window.location.replace(home_page);
+  // window.location.replace(home_page);
  }
 }
 
