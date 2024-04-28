@@ -1,0 +1,2 @@
+# localization
+App Language Translator
