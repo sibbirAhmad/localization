@@ -95,7 +95,7 @@ function isLoggedIn() {
 // Call the function to generate dropdown items
 generateDropdownItems();
 // Default select the first language when the page loads
-if (languages.length > 0) {
+if (languages && languages.length > 0) {
   var iso = getFormCookie("iso");
   selectLanguage(iso == null ? languages[0].iso : iso);
 }
